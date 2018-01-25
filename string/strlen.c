@@ -2,7 +2,7 @@
 
 size_t strlen(const char *s)
 {
-  char *start = s;
+  char *start = (char *)s;
   char *cur = start;
   
   while (*cur)
