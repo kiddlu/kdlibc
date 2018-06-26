@@ -1,5 +1,4 @@
-#include "libgen.h"
-#include "string.h"
+#include <string.h>
 
 char *dirname(char *path)
 {
@@ -20,7 +19,7 @@ char *dirname(char *path)
     if( p < path )
         return ".";
     else if ( p == path )
-        return "/"
+        return "/";
     else {
         *p = '\0';
         return path;
