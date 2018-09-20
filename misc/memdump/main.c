@@ -3,6 +3,34 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#if 0 //for reverse
+void memdump(void *addr, uint32_t size)
+{
+    int index;
+    
+    while (size > 0) {
+        //fprintf(stdout, "%p: ", addr);
+        index = 0;
+
+        // 32 bytes in the line
+        while (index < 32) {
+            fprintf(stdout, "0x%02x,", *((unsigned char *)addr));
+            
+            index++;
+            addr++;
+            size--;
+ 
+            if (size <= 0)
+                break;
+        }
+        //fprintf(stdout, "\n");
+    }
+    fprintf(stdout, "\n");
+    return;
+}
+#endif
+
+
 void memdump(void *addr, uint32_t size)
 {
     int index;
