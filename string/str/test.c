@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "string.h"
+#include <string.h>
 
 int main()
 {
   char *str = "This is a string";
-  printf("strlen is %d\n", strlen(str));
+  printf("strlen is %ld\n", strlen(str));
 
 
   int ret = strcmp("hello", "world");
