@@ -173,23 +173,12 @@ int sha256(const unsigned char *ibuf, uint32_t isize, unsigned char *obuf)
     return 0;
 }
 
-void memdump(void *addr, uint32_t size)
+void print_hex(unsigned char str[], unsigned int len)
 {
-    int index;
-    while (size > 0) {
-        index = 0;
-        // 32 bytes in the line
-        while (index < 64) {
-            fprintf(stdout, "%02x", *((unsigned char *)addr));
-            index++;
-            addr++;
-            size--;
-            if (size <= 0)
-                break;
-        }
-    }
-    fprintf(stdout, "\n");
-    return;
+    int idx;
+
+    for(idx = 0; idx < len; idx++)
+        printf("%02x", str[idx]);
 }
 
 unsigned int get_file_size(FILE *fp)
@@ -227,10 +216,8 @@ int main(int argc, char* argv[])
 
     sha256(data, len, sha_buf);
 
-    printf("\n");
-    printf("SHA256 of file %s (%d bytes) is\n", argv[1], len);
-
-    memdump(sha_buf, SHA256_BLOCK_SIZE);
+    print_hex(sha_buf, SHA256_BLOCK_SIZE);
+    printf("  %s\n", argv[1]);
     return 0;
 }
 

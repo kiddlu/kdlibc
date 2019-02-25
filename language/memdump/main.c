@@ -31,6 +31,14 @@ void memdump(void *addr, uint32_t size)
 #endif
 
 
+void print_hex(unsigned char str[], unsigned int len)
+{
+    int idx;
+
+    for(idx = 0; idx < len; idx++)
+        printf("%02x", str[idx]);
+}
+
 void memdump(void *addr, uint32_t size)
 {
     int index;
