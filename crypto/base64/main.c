@@ -146,9 +146,9 @@ void print_hex(unsigned char str[], unsigned int len)
         printf("%02x", str[idx]);
 }
 
-unsigned int get_file_size(FILE *fp)
+size_t get_file_size(FILE *fp)
 {
-   unsigned int length;
+    size_t length;
 
     fseek(fp, 0L, SEEK_END);
     length = ftell(fp);
@@ -173,8 +173,8 @@ int main(int argc, char* argv[])
     }
 
     FILE *fp = fopen(argv[1], "rb");
-    uint32_t len = get_file_size(fp);
-    uint32_t olen;
+    size_t len = get_file_size(fp);
+    size_t olen;
     unsigned char *out_buf;
 
     char *data = malloc(len);
