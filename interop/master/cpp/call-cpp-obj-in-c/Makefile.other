@@ -4,13 +4,13 @@ main: main.o add.o cwrapper.o
 	gcc -o $@ $^
 
 main.o: main.c
-	g++ -fPIC -c $^ -o $@
+	gcc -c $^ -o $@
 
 add.o: add.cpp
-	g++ -fPIC -c $^ -o $@
+	g++ -c $^ -o $@
 
 cwrapper.o: cwrapper.cpp
-	g++ -fPIC -c $^ -o $@
+	g++ -c $^ -o $@
 
 clean:
 	rm main *.o *.a

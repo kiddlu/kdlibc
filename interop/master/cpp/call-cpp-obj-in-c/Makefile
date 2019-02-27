@@ -1,7 +1,7 @@
 all: main
 
 main: main.o libadd.a libcwrapper.a
-	gcc -o $@ $^ -L. -lcwrapper -ladd
+	gcc -o $@ $^ -L. -lcwrapper -ladd -lstdc++
 
 main.o: main.c
 	gcc -c $^ -o $@
@@ -9,12 +9,12 @@ main.o: main.c
 libadd.a: add.o
 	ar -r $@ $^
 add.o: add.cpp
-	g++ -fPIC -c $^ -o $@
+	g++ -c $^ -o $@
 
 libcwrapper.a: cwrapper.o
 	ar -r $@ $^
 cwrapper.o: cwrapper.cpp
-	g++ -fPIC -c $^ -o $@
+	g++ -c $^ -o $@
 
 clean:
 	rm main *.o *.a
