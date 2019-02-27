@@ -1,6 +1,6 @@
 all: main
 
-main: str.c test.c 
+main: main.c str.c
 	gcc -std=c99 -o $@ $^
 
 clean:

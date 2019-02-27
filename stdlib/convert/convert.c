@@ -27,7 +27,7 @@ char hex2char(int h)
     };
 
     if((h < 0) || (h > 15))
-        return NULL;
+        return '\0';
     else
         return h2c_table[h];
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <string.h>
+
+#include "str.h"
 
 int main()
 {

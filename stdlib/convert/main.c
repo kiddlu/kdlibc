@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include "convert.h"
+
 int test_char2hex(void) {
   int res = 1;
   
