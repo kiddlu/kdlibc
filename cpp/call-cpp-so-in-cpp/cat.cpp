@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "cat.hh"
+#include "cat.h"
 
 using namespace std;
 

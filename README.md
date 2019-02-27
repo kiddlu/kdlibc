@@ -1,4 +1,4 @@
-# kiddlu's C standard library
+# kiddlu's C library
 
 For my programming practice, and sometimes debug/hack use.
 
