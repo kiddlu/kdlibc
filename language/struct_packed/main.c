@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define FAMILY_NAME "huang"
-#define GIVEN_NAME  "xiaolu"
+#define FAMILY_NAME "link"
+#define GIVEN_NAME  "link"
 
 #define FNAME_LEN (sizeof(FAMILY_NAME) - 1)
 #define GNAME_LEN (sizeof(GIVEN_NAME) - 1)
@@ -10,9 +10,9 @@
 struct __attribute__((packed)) person_attr
 {
    char family_name[FNAME_LEN];
-   char given_id[GNAME_LEN];
-   uint64_t id;
-   char passwd[64];
+   char given_name[GNAME_LEN];
+   uint64_t passport_id;
+   char addr[64];
 };
 
 
