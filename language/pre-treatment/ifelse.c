@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #define INT_VALUE 7
 
 
