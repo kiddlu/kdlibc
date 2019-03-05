@@ -32,6 +32,7 @@ char hex2char(int h)
         return h2c_table[h];
 }
 
+//convert hex to str
 int hex2str(unsigned char *hex, int hex_len, char *str, int str_len)
 {
     unsigned char high;
@@ -67,14 +68,17 @@ int hex2str(unsigned char *hex, int hex_len, char *str, int str_len)
     return 0;
 }
 
+//convert str to hex
 int str2hex(char *str, int str_len, unsigned char *hex, int hex_len)
 {
     unsigned char high, low;
-    unsigned int real_str_len = 
-    if(str_len > strlen(str))
+    unsigned int real_str_len = strlen(str);
+
+    if(str_len > real_str_len)
         return -1;
-    else
-        str_len = strlen(str);
+
+    if(hex_len * 2 < str_len)
+        return -1;
 
     for (int i = 0, j = 0; i < len; i++) {
 
