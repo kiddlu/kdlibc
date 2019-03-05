@@ -32,6 +32,78 @@ char hex2char(int h)
         return h2c_table[h];
 }
 
+int hex2str(unsigned char *hex, int hex_len, char *str, int str_len)
+{
+    unsigned char high;
+    unsigned char low;
+
+    unsigned char character_case = 'a';
+
+    if (str_len < hex_len * 2)
+        return -1;
+
+    for (int i = 0; i < hex_len; i++) {
+        high = (hex[i] & 0xf0) >> 4;
+
+        if (high <= 9)
+            high += 0x30;
+        else if (high >= 10 && high <= 15)
+            high = high - 10 + character_case;
+        else
+            return -1;
+
+        low = hex[i] & 0x0f;
+        if (low <= 9)
+            low += 0x30;
+        else if (low >= 10 && low <= 15)
+            low = low - 10 + character_case;
+        else
+            return -1;
+
+        str[i * 2] = high;
+        str[i * 2 + 1] = low;
+    }
+
+    return 0;
+}
+
+int str2hex(char *str, int str_len, unsigned char *hex, int hex_len)
+{
+    unsigned char high, low;
+    unsigned int real_str_len = 
+    if(str_len > strlen(str))
+        return -1;
+    else
+        str_len = strlen(str);
+
+    for (int i = 0, j = 0; i < len; i++) {
+
+        high = str[i];
+        if (high >= 'A' && high <= 'F')
+            high = high - 'A' + 10;
+        else if (high >= 'a' && high <= 'f')
+            high = high - 'a' + 10;
+        else if (high >= '0' && high <= '9')
+            high -= 0x30;
+        else
+            return -1;
+
+        low = str[++i];
+        if (low >= 'A' && low <= 'F')
+            low = low - 'A' + 10;
+        else if (low >= 'a' && low <= 'f')
+            low = low - 'a' + 10;
+        else if (low >= '0' && low <= '9')
+            low -= 0x30;
+        else
+            return -1;
+
+        hex[j++] = (high << 4) | low;
+    }
+
+    return 0;
+}
+
 
 //convert unsigned int to a string
 char *utoa(unsigned int value, char *str, int base)
