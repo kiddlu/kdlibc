@@ -1,7 +1,4 @@
-#include <stdio.h>
-
 #define INT_VALUE 7
-
 
 enum{
     cpp = 1,
@@ -23,6 +20,8 @@ enum{
 #ifndef LANGUAGE
 #error LANGUAGE must be defined
 #endif
+
+extern int printf(const char *format, ...);
 
 int main()
 {
