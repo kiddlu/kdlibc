@@ -7,4 +7,4 @@ read: read.c
 	gcc -std=c99 -o $@ $^
 
 clean:
-	rm write read counter
+	rm write read uint sint

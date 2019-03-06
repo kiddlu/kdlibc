@@ -4,11 +4,17 @@
 
 int main()
 {
-    uint64_t counter;
+    uint64_t uint;
+    int64_t sint;
 
-    FILE *fp = fopen("./counter", "rb"); 
-    fread(&counter, sizeof(counter), 1, fp);
+    FILE *fp = fopen("./uint", "rb"); 
+    fread(&uint, sizeof(uint), 1, fp);
     fclose(fp);
 
-    printf("counter is %"PRIu64"", counter);
+    fp = fopen("./sint", "rb"); 
+    fread(&sint, sizeof(sint), 1, fp);
+    fclose(fp);
+
+    printf("uint is %"PRIu64"\n", uint);
+    printf("sint is %"PRId64"\n", sint);
 }
