@@ -1,7 +1,15 @@
-#include <pthread.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <stdio.h>
+#include <pthread.h>
+
+#define DEBUG
+
+#ifdef DEBUG
+#define LOG(format, ...) fprintf(stdout, format, ##__VA_ARGS__)
+#else
+#define LOG(format, ...)
+#endif
 
 void sync_thread(void)
 {
@@ -14,12 +22,12 @@ void sync_thread(void)
     while (1) {
         sync();
         usleep(200000);
-	printf("sync_thread: sync continue\n");
+	    LOG("sync_thread: sync continue\n");
 
         gettimeofday(&sync_end,NULL);
         diff_sec = sync_end.tv_sec - sync_start.tv_sec;
         if (diff_sec > 20 ) { //start up 20s
-            printf("sync_thread: sync done\n");
+            LOG("sync_thread: sync done\n");
             break;
         }
     }
