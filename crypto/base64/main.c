@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "base64.h"
 
+//use xxd -p -r str to recover buf to file
 void print_hex(unsigned char str[], unsigned int len)
 {
     int idx;
@@ -44,11 +45,18 @@ int main(int argc, char* argv[])
 
     char *data = malloc(len);
     fread(data, len, 1, fp);
-
+#if 0
     base64_encode(data, len, NULL, &olen, 1);
     out_buf = malloc(olen);
     base64_encode(data, len, out_buf, &olen, 1);
-
     printf("%s\n", out_buf);
+#else
+    olen = base64_decode(data, NULL, len);
+    out_buf = malloc(olen);
+    printf("outlen is %d\n", olen);
+    olen = base64_decode(data, out_buf, len);
+    print_hex(out_buf, olen);
+#endif
+
     return 0;
 }
