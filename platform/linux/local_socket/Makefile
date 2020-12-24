@@ -1,16 +1,10 @@
-all: main
+all: client server
 
-main: main.o libcat.so
-	gcc -Wall -Wl,-rpath,. -o $@ $^ -ldl
+client: client.c
+	gcc  $^ -o $@
 
-main.o: main.c
-	g++ -c $^ -o $@
-
-libcat.so: cat.o
-	gcc -shared -Wl,-soname,$@ -o $@ $^
-
-cat.o: cat.c
-	gcc -fPIC -c $^ -o $@
+server: server.c
+	gcc  $^ -o $@
 
 clean:
-	rm main *.o *.so
+	rm server client
