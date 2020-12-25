@@ -6,12 +6,12 @@
 
 # called from kernel build system: just declare what our modules are
 obj-m := helloworld_mod.o
-helloworld_mod-y := helloworld_init.o helloworld_exit.o
+helloworld_mod-y := helloworld_init.o 
+helloworld_mod-y += helloworld_exit.o
 
 CROSS_COMPILE = 
 
 CC = gcc
-
 
 
 # Assume the source tree is where the running kernel was built
@@ -23,10 +23,8 @@ PWD := $(shell pwd)
 
 all:     modules
 
-
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
-
 
 clean:
 	rm -rf *.o *~ core .depend *.symvers .*.cmd *.ko *.mod.c .tmp_versions $(TARGET)
