@@ -12,7 +12,7 @@
 
 #include <signal.h>
 
-#define FORWARD
+//#define FORWARD
 
 #ifdef FORWARD
 #define SPORT 8818
