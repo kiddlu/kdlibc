@@ -53,11 +53,93 @@
 
 
 
-#if 0
+#if 1
 #define dbg_printf printf
 #else 
 #define dbg_printf {;}
 #endif
+
+int my_login_tty(int fd)
+{
+	(void) setsid();
+#ifdef TIOCSCTTY
+	if (ioctl(fd, TIOCSCTTY, (char *)NULL) == -1)
+		return (-1);
+#else
+	{
+	  /* This might work.  */
+	  char *fdname = ttyname (fd);
+	  int newfd;
+	  if (fdname)
+	    {
+	      if (fd != 0)
+		(void) close (0);
+	      if (fd != 1)
+		(void) close (1);
+	      if (fd != 2)
+		(void) close (2);
+	      newfd = open (fdname, O_RDWR);
+	      (void) close (newfd);
+	    }
+	}
+#endif
+	(void) dup2(fd, 0);
+	(void) dup2(fd, 1);
+	(void) dup2(fd, 2);
+	if (fd > 2)
+		(void) close(fd);
+	return (0);
+}
+int my_openpty (int *amaster, int *aslave, char *name, struct termios *termp,
+	 struct winsize *winp)
+{
+
+
+#ifdef PATH_MAX
+  char buf[PATH_MAX];
+#else
+  char buf[512];
+#endif
+
+
+  int master, slave;
+
+  master = posix_openpt (O_RDWR);
+  if (master == -1)
+    return -1;
+
+  if (grantpt (master))
+    goto fail;
+
+  if (unlockpt (master))
+    goto fail;
+
+
+  if (ptsname_r(master, buf, sizeof buf))
+    goto fail;
+
+  slave = open (buf, O_RDWR | O_NOCTTY);
+  if (slave == -1)
+    {
+      goto fail;
+    }
+
+  if(termp)
+    tcsetattr (slave, TCSAFLUSH, termp);
+  if (winp)
+    ioctl (slave, TIOCSWINSZ, winp);
+
+  *amaster = master;
+  *aslave = slave;
+  if (name != NULL)
+    strcpy (name, buf);
+
+  return 0;
+
+ fail:
+  close (master);
+  return -1;
+}
 
 void dumphex(void *data, uint32_t size)
 {
@@ -164,10 +246,6 @@ int main()
 	static char sbuf[SZ_SBUF];
 	struct sockaddr_in ads, adc;
 	socklen_t len;
-#if defined(__SVR4)
-	int pgrp; 
-	char *ts_name;
-#endif 
 
 	// parametros terminal
 	tcgetattr(0, &tt);
@@ -203,19 +281,9 @@ int main()
 	TRY(chdir(WORK_DIR), "chdir");
 #endif
 
-#if defined(__gnu_linux__) || defined(__APPLE__)
 	// creamos pseudo-terminales
 	LOG("openpty!\n");
-	TRY(openpty(&term_m, &term_s, NULL, &tt, &win), "opentty");
-#endif 
-
-#if defined(__SVR4)
-	LOG("open term!\n");
-	TRY((term_m = open("/dev/ptmx", O_RDWR)), "open");
-	TRY(unlockpt(term_m), "unlockpt");
-	ts_name = (char *)ptsname(term_m);
-	TRY(grantpt(term_m), "grantpt");
-#endif 
+	TRY(my_openpty(&term_m, &term_s, NULL, &tt, &win), "opentty");
 
 	// instalamos manejador ints 
 	LOG("set signals!\n");
@@ -229,102 +297,18 @@ int main()
 	TRY((pid = fork()), "fork");
 
 	// hijo?
-	if (!pid)
+	if (pid == 0) //Child
 	{
 		// cerramos term_m
 		close(term_m);
 
-#if defined(__gnu_linux__) || defined(__APPLE__)
 		// preparamos tty
 		//LOG("login_tty!\n");
-		TRY(login_tty(term_s), "login_tty");
-#endif 
-
-#if defined(__SVR4) 
-		// creamos una nueva sesion
-		LOG("setsid!\n");
-		TRY((pgrp = setsid()), "setsid");
-
-		// abrimos slave
-		LOG("open term!\n");
-		TRY((term_s = open(ts_name, O_RDWR)), "open");
-
-		// duplica descriptores
-		LOG("dup2!\n");
-		dup2(term_s, 0);
-		dup2(term_s, 1);
-		dup2(term_s, 2);
-
-		// set foreground the main process
-		LOG("tcsetpgrp!\n");
-		TRY(tcsetpgrp(0, pgrp), "tcsetpgrp");
-
-		// flags necesarios ???
-		tt.c_lflag = ISIG | ICANON | ECHOE | ECHOK | ECHOCTL | ECHOKE | IEXTEN;
-		tt.c_oflag = TABDLY | OPOST;
-		tt.c_iflag = BRKINT | IGNPAR | ISTRIP | ICRNL | IXON | IMAXBEL;
-		tt.c_cflag = CBAUD | CS8 | CREAD;
-#endif
-
+		TRY(my_login_tty(term_s), "login_tty");
 		// desactivamos echo
 		LOG("tcsetattr!\n");
 		tt.c_lflag &= ~ECHO;
 		tcsetattr(0, TCSANOW, &tt);
-	
-/*
-		// auth cutre ;)
-		do
-		{
-			// prompt
-			strcpy(sbuf, "password: "); 
-			sz = strlen(sbuf);
-			write(1, sbuf, sz);
-
-			// leido contrasenia?
-			if ((sz = read(0, sbuf, SZ_SBUF)))
-			{
-				// debug
-				// int i; for (i = 0; i < sz; i++) printf("%02x ", sbuf[i]); printf("\n");
-
-				// pendiente: porque empieza por 0 ???
-				char *idx = (sz && sbuf[0] == 0) ? sbuf + 1 : sbuf;
-
-				// quitamos retornos
-				chomp(idx);
-
-				// es valida? 
-				if (strncmp(idx, "12345", SZ_SBUF))
-				{
-					strcpy(sbuf, "invalid password!\n");
-					sz = strlen(sbuf);
-					write(1, sbuf, sz);
-				}
-
-				else 
-				{
-					strcpy(sbuf, "connected!\n");
-					sz = strlen(sbuf);
-					write(1, sbuf, sz);
-
-					break;
-				}
-
-			}
-
-		} while (1); 
-		
-*/
-/*
-		255 251 34 -> Interpret As Command, Will, Linemode
-
-		0xfb IAC WILL
-		0xfc IAC WONT
-		0xfd IAC DO
-		0xfe IAC DONT
-
-*/
-		// IAC WILL suppress go-ahead (33)
-		//write(1, "\xff\xfb\x03", 3);
 
 		// activamos echo 
 		//tt.c_lflag |= ECHO;
@@ -376,7 +360,6 @@ int main()
 	// inicializamos rfd
 	FD_ZERO(&rfd);
 
-#if defined(__gnu_linux__) || defined(__APPLE__)
 	// IAC WILL ECHO
 	write(sock_c, "\xff\xfb\x01", 3);
 	read(sock_c, sbuf, 3);
@@ -384,8 +367,7 @@ int main()
 	// IAC WILL suppress go-ahead (33)
 	write(sock_c, "\xff\xfb\x03", 3);
 	read(sock_c, sbuf, 3);
-#endif
-
+/*
 	// hasta signal
 	while (1)
 	{
@@ -423,6 +405,7 @@ int main()
 			}
 		}
 	}
+
 
 	// nunca deberia llegar 
 	return 0;
