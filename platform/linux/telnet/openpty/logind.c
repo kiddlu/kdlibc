@@ -210,7 +210,7 @@ void x_abort(const char *msg)
 
 
 // manejador de interrupciones
-void sig(int intr)
+static void sig(int intr)
 {
 	printf("exit code: %d\n", intr);
 
@@ -367,7 +367,7 @@ int main()
 	// IAC WILL suppress go-ahead (33)
 	write(sock_c, "\xff\xfb\x03", 3);
 	read(sock_c, sbuf, 3);
-/*
+
 	// hasta signal
 	while (1)
 	{
