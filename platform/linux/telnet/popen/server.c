@@ -139,6 +139,17 @@ int is_blank(char *input)
 	return 1;
 }
 
+int is_multi_cmd(char *input)
+{
+	int n = (int) strlen(input);
+	int i;
+
+	for (i = 0; i < n; i++) {
+		if ((input[i]) == ';')
+			return 1;
+	}
+	return 0;
+}
 
 /* Parses a single command into a command struct.
  * Allocates memory for keeping the struct and the caller is responsible
@@ -222,14 +233,15 @@ int check_built_in(struct command *cmd)
 //return 0,not build-in
 //return 1, run build-in ok
 //return -1,run build-in err
-int system_input_handle(char *cmd, char*memout, int *ret_len)
+//build-in cmd must be very single
+int system_input_handle(char *cmd)
 {
 	int ret;
 	
 	char *input = malloc(strlen(cmd));
 	memcpy(input, cmd, strlen(cmd));
 
-	if (strlen(input) > 0 && !is_blank(input) && input[0] != '|') {
+	if (strlen(input) > 0 && !is_blank(input) && !is_multi_cmd(input) && input[0] != '|') {
 		char *linecopy = strdup(input);
 
 		struct commands *commands =
@@ -253,8 +265,7 @@ int system_input_handle(char *cmd, char*memout, int *ret_len)
 			struct command *cmd = commands->cmds[0];
 
 			if (strcmp(cmd->name, "exit") == 0){
-				sprintf(memout, "exit?\n");
-				*ret_len = strlen(memout);
+				printf("exit?\n");
 				return 1;
 			}
 			
@@ -264,12 +275,9 @@ int system_input_handle(char *cmd, char*memout, int *ret_len)
 				if(cmd->argv[1][cmd_len - 1] == '\n'){
 					cmd->argv[1][cmd_len - 1] = 0;
 				}
-		
 				ret = chdir(cmd->argv[1]);
 				if (ret != 0) {
-					sprintf(memout, "error: unable to change dir\n");
 					fprintf(stderr, "error: unable to change dir\n");
-					*ret_len = strlen(memout);
 					return -1;
 				}
 				return 1;
@@ -334,13 +342,12 @@ int my_system_memout(char * cmd, char *memout, int *ret_len)
 		return -1;
 	}
 
-	res = system_input_handle(cmd, memout, ret_len);
+	res = system_input_handle(cmd);
 	if (res > 0) {
 		printf("run build-in cmd OK\n");
 		return 1;
 	} else if (res < 0) {
-		printf("run build-in cmd Err\n");
-		return -1;
+		printf("run build-in cmd Err, continue\n");
 	}	
 
 	if((fp = my_popen_timeout(cmd, "r", timeout)) == NULL){
