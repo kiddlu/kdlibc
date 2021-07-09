@@ -1,7 +1,7 @@
 all: main
 
-main: main.c 
-	gcc -std=c99 -o $@ $^
+main: main.c ini.c
+	gcc -o $@ $^
 
 clean:
 	rm main
