@@ -1,0 +1,34 @@
+socketfun - chat
+----------------
+
+This accomplishes a chat server and clients that can chat with each other.
+Error checking is not performed for purpose of brevity and readability.
+
+build instructions
+--------------------------
+$ gcc -o chatserver -lpthread -std=c90 -Wall chatserver.c
+$ gcc -o chatclient -lpthread -std=c90 -Wall chatclient.c
+
+or do
+
+$ make
+
+running
+-------
+$ ./chatserver
+
+On different teminals
+
+$ ./chatclient
+
+commands
+--------
+ls - to get list of users currently connected to the server
+
+send <username> <msg> - to send a message to a particular user
+
+exit - to disconnect from the server
+
+clean up
+--------
+$ make clean

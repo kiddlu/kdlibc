@@ -1,0 +1,18 @@
+CC = gcc
+
+CFLAGS  =  -std=c90 -Wall
+LDFLAGS = -lpthread
+
+SERVER_TARGET = chatserver
+CLIENT_TARGET = chatclient
+
+all: $(SERVER_TARGET) $(CLIENT_TARGET)
+
+$(SERVER_TARGET): $(SERVER_TARGET).c
+	$(CC) $(CFLAGS) -o $(SERVER_TARGET) $(SERVER_TARGET).c $(LDFLAGS)
+
+$(CLIENT_TARGET): $(CLIENT_TARGET).c
+	$(CC) $(CFLAGS) -o $(CLIENT_TARGET) $(CLIENT_TARGET).c $(LDFLAGS)
+
+clean:
+	rm $(SERVER_TARGET) $(CLIENT_TARGET)

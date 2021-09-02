@@ -3,18 +3,24 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+
+
+void dumphex_encode(void *data, uint32_t size)
+{
 #if 1
 #define dbg_printf printf
 #else 
 #define dbg_printf {;}
 #endif
-
-void dumphex_encode(void *data, uint32_t size)
-{
 	char ascii[17];
 	unsigned int i, j;
 	ascii[16] = '\0';
 	for (i = 0; i < size; ++i) {
+		if (i % 16 == 0) {
+		    //dbg_printf("%p: ", data + i);
+            dbg_printf("%08x: ", i);
+		}
+
 		dbg_printf("%02X ", ((unsigned char*)data)[i]);
 		if (((unsigned char*)data)[i] >= ' ' && ((unsigned char*)data)[i] <= '~') {
 			ascii[i % 16] = ((unsigned char*)data)[i];

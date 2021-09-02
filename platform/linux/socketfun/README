@@ -1,0 +1,15 @@
+socketfun
+---------
+
+socketfun is a collection of well commented socket programming code.
+Error checking is not performed for purpose of brevity and readability.
+
+check README files in each directory for more details.
+
+status
+------
+work in progress
+
+appreciate
+----------
+I really appreciate opening issues, if you see any.
